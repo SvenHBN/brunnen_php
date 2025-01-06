@@ -14,14 +14,23 @@ $arr_wd_ext = array(
 
 $terminTable = '<table width="100%"  border="0" cellspacing="0" cellpadding="0">';
 
-// Don't be verbose at any costs :D
-$res_sql = @mysql_connect("xxxxx", "xxxxxx", "xxxxx");
-@mysql_select_db("xxxxxx");
+
+$mysqli = new mysqli("localhost","my_user","my_password","my_db");
+
+if ($mysqli -> connect_errno) {
+  echo "Failed to connect to MySQL: " . $mysqli -> connect_error;
+  exit();
+}
+
 $todays_sqldate = date("Ymd"); // 20070308
 $sql = 'SELECT * FROM termine WHERE terminDatum >= '.$todays_sqldate.' ORDER BY terminDatum ASC';
-$result = @mysql_query($sql);
-while( $row = @mysql_fetch_array($result, MYSQL_ASSOC) ) $termine[] = $row;
-@mysql_close($res_sql);
+$result = $mysqli -> query($sql);
+
+$row = $result -> fetch_array(MYSQLI_ASSOC);
+$mysqli -> close();
+
+$termine[] = $row;
+
 if( !empty($termine) )
 {
 	foreach( $termine as $termin )
